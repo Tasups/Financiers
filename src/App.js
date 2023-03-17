@@ -34,7 +34,7 @@ function App() {
     axios
       .get(tickers)
       .then(res => {
-      console.log(res)
+      console.log(res.data.results)
     }).catch(err => console.log(err))
   }, [tickerNames])
 
@@ -55,33 +55,16 @@ function App() {
   };
   
   
-  // {posts?.map((post) => (
-  //       <div className="posts__card" key={post._id}>
-  //         <h4>{post.title}</h4>
-  //         <h5>{post.description}</h5>
-  //         <div className="posts__button-container">
-  //           <Button
-  //             className="posts__buton"
-  //             variant="info"
-  //             onClick={() => updatePost(post)}
-  //           >
-  //             UPDATE
-  //           </Button>
-  //           <Button
-  //             onClick={() => deletePost(post._id)}
-  //             className="posts__buton"
-  //             variant="danger"
-  //           >
-  //             DELETE
-  //           </Button>
-  //         </div>
-  //       </div>
-  //     ))}
-  
   return (
     <div className="App">
       <button onClick={getData}>GET DATA</button>
       <button onClick={() => console.log(data)}>LOG DATA</button>
+      <div>
+        {
+          
+        }
+      </div>
+      
       <div>
         {
           data?.map((el) => (

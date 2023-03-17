@@ -1,3 +1,22 @@
+NOTES FOR CREATING APPLICATION
+
+TODO
+
+Find a Stock API currently using Polygon.io
+
+MAYBE
+Basic Webpage
+--Realtime Price
+--Chart with realtime updates and historical data
+----candlestick with single stocks, using ApexCharts
+----figure out design choices
+
+
+
+
+
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
