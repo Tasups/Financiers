@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 
+import BarChart from './BarChart'
 import './App.css';
 
 // Polygon API docs https://polygon.io/docs/stocks/getting-started
@@ -27,7 +28,7 @@ const oneMonthDaily = "https://api.polygon.io/v2/aggs/ticker/AFL/range/1/day/202
 
 
 function App() {
-  const [data, setData] = useState([])
+  const [data, setData] = useState([12, 36, 6, 25, 35, 10, 20])
   const [tickerNames, setTickerNames] = useState([])
   
   useEffect(() => {
@@ -35,8 +36,9 @@ function App() {
       .get(tickers)
       .then(res => {
       console.log(res.data.results)
+      setTickerNames(res.data.results)
     }).catch(err => console.log(err))
-  }, [tickerNames])
+  }, [])
 
   const getData = () => {
      axios
@@ -45,6 +47,14 @@ function App() {
         setData(res.data.results)
       })
       .catch(err => console.log(err))
+  }
+  
+  const searchTicker = () => {
+    axios
+      .get("https://api.polygon.io/v3/reference/tickers?search=google&active=true&apiKey=t_MS1QLfZrJGkotOfuYiqC2643_qYUaa")
+      .then(res => {
+      console.log(res)
+    }).catch(err => console.log(err))
   }
   
   const dateConversion = () => {
@@ -57,11 +67,17 @@ function App() {
   
   return (
     <div className="App">
+      <button onClick={searchTicker}>GET PRESET TICKER</button>
       <button onClick={getData}>GET DATA</button>
       <button onClick={() => console.log(data)}>LOG DATA</button>
       <div>
-        {
-          
+        {/*
+          tickerNames?.map((ticker) => (
+            <div className="ticker__card" key={ticker.name}>
+            <h6>Name: {ticker.name}</h6>
+            <h6>Ticker: {ticker.ticker}</h6>
+            </div>
+          ))
         }
       </div>
       
@@ -78,9 +94,10 @@ function App() {
               </div>
             </React.Fragment>
           ))
-        }
+        */}
       </div>
       <div id="chart">
+        <BarChart data={data} w={800} h={600} color="darkblue" />
       </div>
     </div>
   );
