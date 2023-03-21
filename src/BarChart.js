@@ -16,6 +16,7 @@ const BarChart = (props) => {
       .style('background-color', 'lightblue')
       .style('padding', 10)
       .style('margin-left', 0)
+      .style('margin-top', "1rem")
   
     accessToRef.selectAll('rect')
       .data(data)

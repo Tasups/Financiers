@@ -1,16 +1,23 @@
-
 import * as d3 from "d3";
+
+const dataArray = [ 
+{Date: 2017-11-17, Open: 171.039993, High: 171.389999, Low: 169.639999, Close: 170.149994, AdjClose: 168.808151, Volume: 21899500},
+// {Date: 2017-11-20, Open: 170.289993, High: 170.559998, Low: 169.559998, Close: 169.979996, AdjClose: 168.639496, Volume: 16262400},
+// {Date: 2017-11-21, Open: 170.779999, High: 173.699997, Low: 170.779999, Close: 173.139999, AdjClose: 171.774567, Volume: 25131300},
+// {Date: 2017-11-22, Open: 173.360001, High: 175, Low: 173.050003, Close: 174.960007, AdjClose: 173.580231, Volume: 25588900},
+{Date: 2017-11-24, Open: 175.100006, High: 175.5, Low: 174.649994, Close: 174.970001, AdjClose: 173.590149, Volume: 14026700},
+]
 
 // Copyright 2021 Observable, Inc.
 // Released under the ISC license.
 // https://observablehq.com/@d3/candlestick-chart
-export default function CandlestickChart(data, {
-    // I CHANGED d.open to d.o and similarly for high, low, and close
+function CandlestickChart(data, {
+    
   date = d => d.date, // given d in data, returns the (temporal) x-value
-  open = d => d.o, // given d in data, returns a (quantitative) y-value
-  close = d => d.c, // given d in data, returns a (quantitative) y-value
-  high = d => d.h, // given d in data, returns a (quantitative) y-value
-  low = d => d.l, // given d in data, returns a (quantitative) y-value
+  open = d => d.open, // given d in data, returns a (quantitative) y-value
+  close = d => d.close, // given d in data, returns a (quantitative) y-value
+  high = d => d.high, // given d in data, returns a (quantitative) y-value
+  low = d => d.low, // given d in data, returns a (quantitative) y-value
   title, // given d in data, returns the title text
   marginTop = 20, // top margin, in pixels
   marginRight = 30, // right margin, in pixels
@@ -58,6 +65,10 @@ export default function CandlestickChart(data, {
   const yScale = yType(yDomain, yRange);
   const xAxis = d3.axisBottom(xScale).tickFormat(d3.utcFormat(xFormat)).tickValues(xTicks);
   const yAxis = d3.axisLeft(yScale).ticks(height / 40, yFormat);
+  
+  console.log(X)
+  console.log("xScale: " + xScale)
+  console.log(data[0])
 
   // Compute titles.
   if (title === undefined) {
@@ -65,10 +76,10 @@ export default function CandlestickChart(data, {
     const formatValue = d3.format(".2f");
     const formatChange = (f => (y0, y1) => f((y1 - y0) / y0))(d3.format("+.2%"));
     title = i => `${formatDate(X[i])}
-Open: ${formatValue(Yo[i])}
-Close: ${formatValue(Yc[i])} (${formatChange(Yo[i], Yc[i])})
-Low: ${formatValue(Yl[i])}
-High: ${formatValue(Yh[i])}`;
+    Open: ${formatValue(Yo[i])}
+    Close: ${formatValue(Yc[i])} (${formatChange(Yo[i], Yc[i])})
+    Low: ${formatValue(Yl[i])}
+    High: ${formatValue(Yh[i])}`;
   } else if (title !== null) {
     const T = d3.map(data, title);
     title = i => T[i];
@@ -100,12 +111,13 @@ High: ${formatValue(Yh[i])}`;
           .text(yLabel));
 
   const g = svg.append("g")
-      .attr("stroke", stroke)
-      .attr("stroke-linecap", strokeLinecap)
+    .attr("stroke", stroke)
+    .attr("stroke-linecap", strokeLinecap)
     .selectAll("g")
     .data(I)
     .join("g")
-      .attr("transform", i => `translate(${xScale(X[i])},0)`);
+    // the next line, with xScale(X[i]) returns "translate(undefined, 0)" ${xScale(X[i])}
+    .attr("transform", i => `translate(1,0)`);
 
   g.append("line")
       .attr("y1", i => yScale(Yl[i]))
@@ -122,3 +134,5 @@ High: ${formatValue(Yh[i])}`;
 
   return svg.node();
 }
+
+export const graphSVG = CandlestickChart(dataArray)

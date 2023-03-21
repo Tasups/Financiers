@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 
 import BarChart from './BarChart'
+import { graphSVG } from './candlestick'
 import './App.css';
 
 // Polygon API docs https://polygon.io/docs/stocks/getting-started
@@ -30,6 +31,8 @@ const oneMonthDaily = "https://api.polygon.io/v2/aggs/ticker/AFL/range/1/day/202
 function App() {
   const [data, setData] = useState([12, 36, 6, 25, 35, 10, 20])
   const [tickerNames, setTickerNames] = useState([])
+  
+  console.log(graphSVG)
   
   useEffect(() => {
     axios
@@ -71,6 +74,7 @@ function App() {
       <button onClick={getData}>GET DATA</button>
       <button onClick={() => console.log(data)}>LOG DATA</button>
       <div>
+      {graphSVG}
         {/*
           tickerNames?.map((ticker) => (
             <div className="ticker__card" key={ticker.name}>
@@ -97,7 +101,7 @@ function App() {
         */}
       </div>
       <div id="chart">
-        <BarChart data={data} w={800} h={600} color="darkblue" />
+        {/*<BarChart data={data} w={800} h={600} color="darkblue" />*/}
       </div>
     </div>
   );
