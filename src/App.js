@@ -1,110 +1,120 @@
-import React, { useEffect, useState } from 'react'
-import axios from 'axios'
+import React, { useState, useEffect } from 'react'
 
-import BarChart from './BarChart'
-import { graphSVG } from './candlestick'
+import PokemonRow from './PokemonRow';
+
 import './App.css';
 
-// Polygon API docs https://polygon.io/docs/stocks/getting-started
-
-// Gives you the entire list of tickers
-const tickers = "https://api.polygon.io/v3/reference/tickers?active=true&apiKey=t_MS1QLfZrJGkotOfuYiqC2643_qYUaa"
-const tickersWithSearch = "https://api.polygon.io/v3/reference/tickers?search=search_term&active=true&apiKey=t_MS1QLfZrJGkotOfuYiqC2643_qYUaa"
-
-// Ticker Details requires the ticker and the date in question
-const tickerDetails = "https://api.polygon.io/v3/reference/tickers/AFL?date=2023-03-07&apiKey=t_MS1QLfZrJGkotOfuYiqC2643_qYUaa"
-
-const something = "https://api.polygon.io/v3/reference/tickers?active=true&apiKey=t_MS1QLfZrJGkotOfuYiqC2643_qYUaa"
-
-// this is AFL, Aflac, ticker for one day, 01-09-2023, showing hourly results (9 total)
-const oneDayHourly = "https://api.polygon.io/v2/aggs/ticker/AFL/range/1/hour/2023-01-09/2023-01-09?adjusted=true&sort=asc&limit=5000&apiKey=t_MS1QLfZrJGkotOfuYiqC2643_qYUaa"
-
-const oneDay5minutes = "https://api.polygon.io/v2/aggs/ticker/AFL/range/5/minute/2023-01-09/2023-01-09?adjusted=true&sort=asc&limit=5000&apiKey=t_MS1QLfZrJGkotOfuYiqC2643_qYUaa"
-const oneDay5minutesFORMAT = "https://api.polygon.io/v2/aggs/ticker/{stocksTicker}/range/{multiplier}/{timespan}/{from}/{to}?adjusted=true&sort=asc&limit=5000&apiKey=t_MS1QLfZrJGkotOfuYiqC2643_qYUaa"
-// this is AFL, Aflac, ticker for one month, 01-09-2023 to 02-09-2023, showing daily results (23 total)
-const oneMonthDaily = "https://api.polygon.io/v2/aggs/ticker/AFL/range/1/day/2023-01-09/2023-02-09?adjusted=true&sort=asc&limit=5000&apiKey=t_MS1QLfZrJGkotOfuYiqC2643_qYUaa"
-
-// FOR THE CHART, TRY THIS D3 PIECE 
-// https://observablehq.com/@d3/candlestick-chart
+const pokemonArray = [
+  {
+    id: 1,
+    name: "Bulbasaur",
+    types: ["grass"],
+    sprite: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png"
+  }, 
+  {
+    id: 2,
+    name: "IvySaur",
+    types: ["poison"],
+    sprite: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/2.png"
+  }, 
+  {
+    id: 3,
+    name: "Venusaur",
+    types: ["grass", "poison"],
+    sprite: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/3.png"
+  },
+  {
+    id: 4,
+    name: "Charmander",
+    types: ["fire"],
+    sprite: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/4.png"
+  },
+];
 
 
 function App() {
-  const [data, setData] = useState([12, 36, 6, 25, 35, 10, 20])
-  const [tickerNames, setTickerNames] = useState([])
+  const [data, setData] = useState(pokemonArray);
+  const [types, setTypes] = useState([]);
+  const [type, setType] = useState("");
   
-  console.log(graphSVG)
-  
-  useEffect(() => {
-    axios
-      .get(tickers)
-      .then(res => {
-      console.log(res.data.results)
-      setTickerNames(res.data.results)
-    }).catch(err => console.log(err))
-  }, [])
-
-  const getData = () => {
-     axios
-      .get(oneDay5minutes)
-      .then(res => {
-        setData(res.data.results)
-      })
-      .catch(err => console.log(err))
-  }
-  
-  const searchTicker = () => {
-    axios
-      .get("https://api.polygon.io/v3/reference/tickers?search=google&active=true&apiKey=t_MS1QLfZrJGkotOfuYiqC2643_qYUaa")
-      .then(res => {
-      console.log(res)
-    }).catch(err => console.log(err))
-  }
-  
-  const dateConversion = () => {
-    let date = new Date();
-    let dateToString = date.toString();
-    let slicedDate = dateToString.slice(0, -38);
-    return slicedDate;
-  };
-  
-  
-  return (
-    <div className="App">
-      <button onClick={searchTicker}>GET PRESET TICKER</button>
-      <button onClick={getData}>GET DATA</button>
-      <button onClick={() => console.log(data)}>LOG DATA</button>
-      <div>
-      {graphSVG}
-        {/*
-          tickerNames?.map((ticker) => (
-            <div className="ticker__card" key={ticker.name}>
-            <h6>Name: {ticker.name}</h6>
-            <h6>Ticker: {ticker.ticker}</h6>
-            </div>
-          ))
+  useEffect(()=> {
+    setData(pokemonArray);
+    
+    const filterTypes = (arr) => {
+      const typeList = [];
+      for(let i = 0; i < arr.length; i ++) {
+        for(let j = 0; j < arr[i].types.length; j++) {
+          typeList.push(arr[i].types[j])
         }
-      </div>
+      }
+      let typeContainer = {};
+      for(let k = 0; k < typeList.length; k++) {
+        if(!typeContainer[typeList[k]]) {
+          typeContainer[typeList[k]] = 1;
+        } 
+      }
+      let typeArray = [];
+      for(const key in typeContainer) {
+        typeArray.push(key);
+      }
+      setTypes(typeArray);
+    }
+    filterTypes(data);
+  }, [data])
+  
+  const filterType = (val) => {
+    const filteredPokemonArray = pokemonArray.filter(el => el.type === val);
+    console.log(filteredPokemonArray);
+    setData(filteredPokemonArray);
+  }
+  
+  
+  return(
+    <div className="App">
+      <table>
+        <thead>
+          <tr>
+            <th>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            data.map(el => {
+              return (
+                <PokemonRow
+                  id={el.id}
+                  name={el.name}
+                  types={el.types[0]}
+                  sprite={el.sprite}
+                  key={el.id}
+                />
+              )
+            })
+          }
+        </tbody>
+      </table>
       
       <div>
-        {
-          data?.map((el) => (
-            <React.Fragment>
-              <div className="ticker__card" key={el.name}>
-                <h5>Opening: {el.o}</h5>
-                <h5>High: {el.h}</h5>
-                <h5>Low: {el.l}</h5>
-                <h5>Closing: {el.c}</h5>
-                <h5>Date: {el.t}</h5>
-              </div>
-            </React.Fragment>
-          ))
-        */}
-      </div>
-      <div id="chart">
-        {/*<BarChart data={data} w={800} h={600} color="darkblue" />*/}
+      <form>
+        <label htmlFor="pokemonType">Choose a Type:</label>
+        <select 
+          name="pokemonType" 
+          id="pokemonType" 
+          value={type} 
+          onChange={(e) => setType(e.target.value)}
+        >
+          {types.map((type) => (
+            <option key={type} value={type}>
+              {type}
+            </option>
+          ))}
+        </select>
+      </form>
+      <button onClick={() => filterType(type)}>Submit</button>
       </div>
     </div>
-  );
+    )
 }
 
 export default App;
